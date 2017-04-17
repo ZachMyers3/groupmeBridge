@@ -1,0 +1,11 @@
+{
+  "name": "groupme-bridge",
+  "version": "1.0.0",
+  "description": "bridge matrix and groupme",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
