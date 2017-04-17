@@ -7,6 +7,7 @@ var requestLib  = require("request");
 
 const PORT = 9889;
 
+/*
 new Cli({
   registrationPath: "groupme-registration.yaml",
   generateRegistration: function(reg, callback) {
@@ -21,7 +22,7 @@ new Cli({
     // TODO
   }
 }).run();
-
+*/
 http.createServer(function (request, response) {
   console.log(request.method + " " + request.url);
   
