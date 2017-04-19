@@ -43,7 +43,7 @@ var Bridge = require("matrix-appservice-bridge").Bridge;
 var AppServiceRegistration = require("matrix-appservice-bridge").AppServiceRegistration;
 
 new Cli({
-    registrationPath: "groupe-registration.yaml",
+    registrationPath: "groupme-registration.yaml",
     generateRegistration: function(reg, callback) {
         reg.setHomeserverToken(AppServiceRegistration.generateToken());
         reg.setAppServiceToken(AppServiceRegistration.generateToken());
