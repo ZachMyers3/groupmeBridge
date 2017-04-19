@@ -6,6 +6,8 @@ var http        = require("http");
 var requestLib  = require("request");
 
 const PORT = 9889;
+const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
+const GROUPME_WEBHOOK_URL = "https://api.groupme.com/v3/bots/post"
 
 console.log("Starting groupme <-> matrix bridge...");
 
@@ -41,51 +43,52 @@ var Bridge = require("matrix-appservice-bridge").Bridge;
 var AppServiceRegistration = require("matrix-appservice-bridge").AppServiceRegistration;
 
 new Cli({
-  registrationPath: "groupme-registration.yaml",
-  generateRegistration: function(reg, callback) {
-    reg.setId(AppServiceRegistration.generateToken());
-    reg.setHomeserverToken(AppServiceRegistration.generateToken());
-    reg.setAppServiceToken(AppServiceRegistration.generateToken());
-    reg.setSenderLocalpart("gmbot");
-    reg.addRegexPattern("users", "@gm_.*", true);
-    callback(reg);
-  },
-  run: function(port, config) {
-    bridge = new Bridge({
-    homeserverUrl: "http://localhost:8008",
-    domain: "localhost",
-    registration: "groupme-registration.yaml",
-    controller: {
-      onUserQuery: function(queriedUser) {
-        return {}; // auto-provision users with no additonal data
-      },    
-      onEvent: function(request, context) {
-        var event = request.getData();
-        // replace with your room ID
-        if (event.type !== "m.room.message" || !event.content || event.room_id !== $ROOM_ID) {
-          return;
-        }
-        requestLib({
-          method: "POST",
-          json: true,
-          uri: $WEBHOOK_URL, // replace with your url!
-          body: {
-            username: event.user_id,
-            text: event.content.body
-          }
-        }, function(err, res) {
-          if (err) {
-            console.log("HTTP Error: %s", err);
-          }
-          else {
-            console.log("HTTP %s", res.statusCode);
-          }
+    registrationPath: "groupe-registration.yaml",
+    generateRegistration: function(reg, callback) {
+        reg.setHomeserverToken(AppServiceRegistration.generateToken());
+        reg.setAppServiceToken(AppServiceRegistration.generateToken());
+        reg.setSenderLocalpart("gmbot");
+        reg.addRegexPattern("users", "@gm_.*", true);
+        callback(reg);
+    },
+    run: function(port, config) {
+        bridge = new Bridge({
+            homeserverUrl: "http://localhost:8008",
+            domain: "localhost",
+            registration: "groupme-registration.yaml",
+
+            controller: {
+                onUserQuery: function(queriedUser) {
+                    return {}; // auto-provision users with no additonal data
+                },
+
+                onEvent: function(request, context) {
+                    var event = request.getData();
+                    if (event.type !== "m.room.message" || !event.content || event.room_id !== ROOM_ID) {
+                        return;
+                    }
+                    requestLib({
+                        method: "POST",
+                        json: true,
+                        uri: GROUPME_WEBHOOK_URL,
+                        body: {
+                            username: event.user_id,
+                            text: event.content.body
+                        }
+                    }, function(err, res) {
+                        if (err) {
+                            console.log("HTTP Error: %s", err);
+                        }
+                        else {
+                            console.log("HTTP %s", res.statusCode);
+                        }
+                    });
+                }
+            }
         });
-      } 
+        console.log("Matrix-side listening on port %s", port);
+        bridge.run(port, config);
     }
-  });
-  console.log("Matrix-side listening on port %s", port);
-  bridge.run(port, config);
 }).run();
 
 
