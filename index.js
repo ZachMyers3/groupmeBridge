@@ -86,7 +86,6 @@ new Cli({
   });
   console.log("Matrix-side listening on port %s", port);
   bridge.run(port, config);
-  })
 }).run();
 
 
