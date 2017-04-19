@@ -7,6 +7,8 @@ var requestLib  = require("request");
 
 const PORT = 9889;
 
+console.log("Starting groupme <-> matrix bridge...");
+
 /*
 new Cli({
   registrationPath: "groupme-registration.yaml",
