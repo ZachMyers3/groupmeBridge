@@ -18,10 +18,15 @@ http.createServer(function (request, response) {
   });
 
   request.on("end", function() {
-    console.log(body);
+    // TODO: Make sure this is working properly
+    var params = qs.parse(body);
+    if (params.user_id !== "UGMBOT") {
+      var intent = bridge.getIntent("@gm_" + params.user_name + ":localhost");
+      intent.sendText(ROOM_ID, params.text);
+    }
     response.writeHead(200, {"Content-Type": "application/json"});
     response.write(JSON.stringify({}));
-    response.end();  
+    response.end();
   });
 
 }).listen(PORT);
@@ -46,6 +51,42 @@ new Cli({
     callback(reg);
   },
   run: function(port, config) {
-    // we will do this later
-  }
+    bridge = new Bridge({
+    homeserverUrl: "http://localhost:8008",
+    domain: "localhost",
+    registration: "groupme-registration.yaml",
+    controller: {
+      onUserQuery: function(queriedUser) {
+        return {}; // auto-provision users with no additonal data
+      },    
+      onEvent: function(request, context) {
+        var event = request.getData();
+        // replace with your room ID
+        if (event.type !== "m.room.message" || !event.content || event.room_id !== $ROOM_ID) {
+          return;
+        }
+        requestLib({
+          method: "POST",
+          json: true,
+          uri: $WEBHOOK_URL, // replace with your url!
+          body: {
+            username: event.user_id,
+            text: event.content.body
+          }
+        }, function(err, res) {
+          if (err) {
+            console.log("HTTP Error: %s", err);
+          }
+          else {
+            console.log("HTTP %s", res.statusCode);
+          }
+        });
+      } 
+    }
+  });
+  console.log("Matrix-side listening on port %s", port);
+  bridge.run(port, config);
+  })
 }).run();
+
+
