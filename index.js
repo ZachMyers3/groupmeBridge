@@ -1,3 +1,4 @@
+var HTTPS       = require('https');
 var Cli         = require("matrix-appservice-bridge").Cli;
 var Bridge      = require("matrix-appservice-bridge").Bridge;
 var AppServiceRegistration 
