@@ -25,6 +25,7 @@ http.createServer(function (request, response) {
     var params = JSON.parse(body);
     console.log(params)
     if (params.sender_type === "user") {
+      var message = replaceEmoji(params);
       var intent = bridge.getIntent("@gm_" + params.name + ":gmbridge.ddns.net");
       intent.sendText(ROOM_ID, params.text);
     }
@@ -134,4 +135,63 @@ function postMessage(messageText, userName) {
     console.log('timeout posting message '  + JSON.stringify(err));
   });
   botReq.end(JSON.stringify(body));
+}
+
+// Subject is message JSON from GroupMe
+function replaceEmoji(subject) {
+  // Read the text of the message
+  var text = subject['text'];
+  // If there are no attachments, then there' are no emojis's no need to run the rest.
+  if (subject['attachments'] != null) {
+    // For each attachment...
+    for(i=0; i<subject['attachments'].length; ++i) {
+      var attachment = subject['attachments'][i];
+      // We're only dealing with emoji attachments here.
+      if (attachment['type'] == 'emoji') {
+        // The first part of the charmap for emoji attachments is the pack ID, the 
+        // second is the powerup ID.
+        var pack_id = attachment['charmap'][0][0];
+        var powerup_id = attachment['charmap'][0][1];
+        var image = null;
+        // Looking at the powerups from the function at the top, cycling through them.
+        // i is the index and v is the value. There is probably a much cleaner way to
+        // do this, but it had to be quick at the time and it works.
+        $.each(powerups, function(i, v) {
+          // If the pack ID matches the attachment's...
+          if (v['meta']['pack_id'] == pack_id) {
+            // We're going to cycle through the powerups in the pack. Again, there's
+            // probably a much cleaner way to do this.
+            $.each(v['meta']['inline'], function(j, u) {
+              // I am getting the same sized emojis all the time, but there are other
+              // options. Just take a look at the powerups JSON for more options.
+              if (u['x'] == 20) {
+                // Finally, the URL for the image, which contains a bunch of emojis
+                // in one.
+                image = u['image_url'];
+              }
+            });
+          }
+        });
+        if (image == null) {
+          continue;
+        }
+        // The pixel height multiplied by the powerup ID (negated) will give you the 
+        // proper background-position vertical placement value.
+        var pixel_down = 20 * powerup_id * -1;
+        var image_html = '<span style="';
+        image_html += "background: url(";
+        image_html += image;
+        image_html += ") no-repeat left top;";
+        image_html += "background-size: 20px auto !important;";
+        image_html += "background-position: 0 ";
+        image_html += pixel_down;
+        image_html += "px;";
+        image_html += '" class="emoji"></span>';
+        // Replace the placeholder character with the HTML for the image.
+        text = text.replace(attachment['placeholder'], image_html);
+      }
+    }
+  }
+  // Return the final text with placeholder characters replaced with HTML.
+  return text;
 }
