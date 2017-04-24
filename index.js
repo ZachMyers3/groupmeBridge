@@ -8,6 +8,7 @@ var qs 		= require("querystring");
 
 const PORT = 9889;
 const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
+const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
 const GROUPME_WEBHOOK_URL = "https://api.groupme.com/v3/bots/post"
 
 console.log("Starting groupme <-> matrix bridge...");
@@ -23,8 +24,9 @@ http.createServer(function (request, response) {
   request.on("end", function() {
     // TODO: Make sure this is working properly
     var params = JSON.parse(body);
+    console.log(params)
     if (params.sender_type === "user") {
-      var intent = bridge.getIntent("@gm_" + params.name + ":localhost");
+      var intent = bridge.getIntent("@gm_" + params.sender_id + ":localhost");
       intent.sendText(ROOM_ID, params.text);
     }
     response.writeHead(200, {"Content-Type": "application/json"});
@@ -65,6 +67,8 @@ new Cli({
 
                 onEvent: function(request, context) {
                     var event = request.getData();
+                    console.log("*************************")
+                    console.log(event)
                     if (event.type !== "m.room.message" || !event.content || event.room_id !== ROOM_ID) {
                         return;
                     }
