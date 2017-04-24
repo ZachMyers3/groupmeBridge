@@ -10,8 +10,6 @@ const PORT = 9889;
 const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
 const GROUPME_WEBHOOK_URL = "https://api.groupme.com/v3/bots/post"
 
-console.log("Starting groupme <-> matrix bridge...");
-
 http.createServer(function (request, response) {
   console.log(request.method + " " + request.url);
   
@@ -66,11 +64,11 @@ new Cli({
 
                 onEvent: function(request, context) {
                     var event = request.getData();
-                    console.log("*************************")
-                    console.log(event)
                     if (event.type !== "m.room.message" || !event.content || event.room_id !== ROOM_ID) {
                         return;
                     }
+                    console.log("*************************")
+                    console.log(event)
                     requestLib({
                         method: "POST",
                         json: true,
