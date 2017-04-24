@@ -9,6 +9,7 @@ var qs 		= require("querystring");
 const PORT = 9889;
 const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
 const GROUPME_WEBHOOK_URL = "https://api.groupme.com/v3/bots/"
+const GROUPME_BOT_ID = "d321872b4b13d29e9cedaa1da7"
 
 http.createServer(function (request, response) {
   console.log(request.method + " " + request.url);
@@ -69,7 +70,7 @@ new Cli({
                     }
                     console.log("*************************")
                     console.log(event)
-                    postMessage(event.user_id, event.content.body);
+                    postMessage(GROUPME_BOT_ID, event.user_id, event.content.body);
                     
 
                     /*
@@ -99,10 +100,10 @@ new Cli({
     }
 }).run();
 
-function postMessage(messageText, botID) {
+function postMessage(messageText, userName, botID) {
   var botResponse, options, body, botReq;
 
-  botResponse = messageText;
+  botResponse = userName + ":\n" + messageText;
 
   options = {
     hostname: 'api.groupme.com',
