@@ -69,6 +69,10 @@ new Cli({
                     }
                     console.log("*************************")
                     console.log(event)
+                    postMessage(event.user_id, event.content.body);
+                    
+
+                    /*
                     requestLib({
                         method: "POST",
                         json: true,
@@ -86,6 +90,7 @@ new Cli({
                             console.log("HTTP %s", res.statusCode);
                         }
                     });
+                    */
                 }
             }
         });
@@ -94,10 +99,10 @@ new Cli({
     }
 }).run();
 
-function postMessage() {
+function postMessage(messageText, botID) {
   var botResponse, options, body, botReq;
 
-  botResponse = cool();
+  botResponse = messageText;
 
   options = {
     hostname: 'api.groupme.com',
