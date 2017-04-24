@@ -23,7 +23,7 @@ http.createServer(function (request, response) {
     var params = JSON.parse(body);
     console.log(params)
     if (params.sender_type === "user") {
-      var intent = bridge.getIntent("@gm_" + params.sender_id + ":localhost");
+      var intent = bridge.getIntent("@gm_" + params.sender_id + ":gmbridge.ddns.net");
       intent.sendText(ROOM_ID, params.text);
     }
     response.writeHead(200, {"Content-Type": "application/json"});
