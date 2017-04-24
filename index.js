@@ -8,7 +8,6 @@ var qs 		= require("querystring");
 
 const PORT = 9889;
 const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
-const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
 const GROUPME_WEBHOOK_URL = "https://api.groupme.com/v3/bots/post"
 
 console.log("Starting groupme <-> matrix bridge...");
