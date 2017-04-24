@@ -1,0 +1,12 @@
+id: 6f081726cb93162b9d5f56785c6fef98e5c6504cc61c9d25052bcae8150e1121
+hs_token: 5d0f3a47e21a743565e8a9558e61fe28026d39dd6b2b8605c7fbdbe0153b2e3c
+as_token: 19866316df8b54aa40e0cd3e3d03bc09f81430f61228af19b26f8c35bbead659
+namespaces:
+  users:
+    - exclusive: true
+      regex: '@gm_.*'
+  aliases: []
+  rooms: []
+url: 'http://localhost:9000'
+sender_localpart: gmbot
+rate_limited: true
