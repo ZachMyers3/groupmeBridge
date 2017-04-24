@@ -71,7 +71,7 @@ new Cli({
                     }
                     console.log("*************************")
                     console.log(event)
-                    postMessage(GROUPME_BOT_ID, event.user_id, event.content.body);
+                    postMessage(event.content.body, event.user_id);
                     
 
                     /*
@@ -101,7 +101,7 @@ new Cli({
     }
 }).run();
 
-function postMessage(messageText, userName, botID) {
+function postMessage(messageText, userName) {
   var botResponse, options, body, botReq;
 
   botResponse = userName + ":\n" + messageText;
@@ -113,11 +113,11 @@ function postMessage(messageText, userName, botID) {
   };
 
   body = {
-    "bot_id" : botID,
+    "bot_id" : GROUPME_BOT_ID,
     "text" : botResponse
   };
 
-  console.log('sending ' + botResponse + ' to ' + botID);
+  console.log('sending ' + botResponse + ' to ' + GROUPME_BOT_ID);
 
   botReq = HTTPS.request(options, function(res) {
       if(res.statusCode == 202) {
