@@ -4,6 +4,7 @@ var AppServiceRegistration
                 = require("matrix-appservice-bridge").AppServiceRegistration;
 var http        = require("http");
 var requestLib  = require("request");
+var qs 		= require("querystring");
 
 const PORT = 9889;
 const ROOM_ID = "!zeGfOsnOVRaFQzfljM:gmbridge.ddns.net";
@@ -21,9 +22,9 @@ http.createServer(function (request, response) {
 
   request.on("end", function() {
     // TODO: Make sure this is working properly
-    var params = qs.parse(body);
-    if (params.user_id !== "UGMBOT") {
-      var intent = bridge.getIntent("@gm_" + params.user_name + ":localhost");
+    var params = JSON.parse(body);
+    if (params.sender_type === "user") {
+      var intent = bridge.getIntent("@gm_" + params.name + ":localhost");
       intent.sendText(ROOM_ID, params.text);
     }
     response.writeHead(200, {"Content-Type": "application/json"});
