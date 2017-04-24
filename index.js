@@ -78,7 +78,7 @@ new Cli({
                             text: event.content.body
                         }
                     }, function(err, res) {
-                        console.log(res);
+                        console.log(err);
                         if (err) {
                             console.log("HTTP Error: %s", err);
                         }
