@@ -1,4 +1,4 @@
-var HTTPS       = require('https');
+var HTTPS       = require("https");
 var Cli         = require("matrix-appservice-bridge").Cli;
 var Bridge      = require("matrix-appservice-bridge").Bridge;
 var AppServiceRegistration 
@@ -21,11 +21,11 @@ http.createServer(function (request, response) {
   });
 
   request.on("end", function() {
-    // TODO: Make sure this is working properly
     var params = JSON.parse(body);
     console.log(params)
-    if (params.sender_type === "user") {
-      var intent = bridge.getIntent("@gm_" + params.name + ":gmbridge.ddns.net");
+    if (params.name !== "Matrix Bridge") {
+      var name = removeEmojis(params.name);
+      var intent = bridge.getIntent("@gm_" + name + ":gmbridge.ddns.net");
       intent.sendText(ROOM_ID, params.text);
     }
     response.writeHead(200, {"Content-Type": "application/json"});
@@ -104,6 +104,8 @@ new Cli({
 function postMessage(messageText, userName) {
   var botResponse, options, body, botReq;
 
+  userName = userName.substring(1, userName.indexOf(':'));
+
   botResponse = userName + ":\n" + messageText;
 
   options = {
@@ -134,4 +136,8 @@ function postMessage(messageText, userName) {
     console.log('timeout posting message '  + JSON.stringify(err));
   });
   botReq.end(JSON.stringify(body));
+}
+
+function removeEmojis(message) {
+  return message.replace(/([\uE000-\uF8FF]|\uD83C[\uDF00-\uDFFF]|\uD83D[\uDC00-\uDDFF])/g, '')
 }
